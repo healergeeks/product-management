@@ -7,6 +7,7 @@ const searchHelpers = require("../../helpers/search");
 const systemConfig = require("../../config/system");
 
 const paginationHealper = require("../../helpers/pagination");
+
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
 
@@ -65,6 +66,7 @@ module.exports.index = async (req, res) => {
     pagination: objectPagination,// phẩn trang
   });
 }
+
 //[PATCH] /admin/products/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
 
@@ -211,7 +213,6 @@ module.exports.editPatch = async (req, res) => {
   }
   res.redirect("back");
 };
-
 
 // [GET] /admin/products/edit/:id 
 module.exports.detail = async (req, res) => {
