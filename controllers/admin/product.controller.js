@@ -168,9 +168,7 @@ module.exports.createPost = async (req, res) => {
     // chuyển đổi kiểu dữ liệu 
     req.body.position = parseInt(req.body.position);
   }
-  if (req.file) {
-    req.body.thumbnail = `/uploads/${req.file.filename}`;//được cấu hình để lưu trữ các tệp tải lên vào thư mục ./public/uploads/ trên máy chủ.
-  };
+  
   const product = new Product(req.body);//tạo ra một sản phẩm được chuyền lên web 
   await product.save();//sau đó lưu vào cở sở dữ liệu save()
   res.redirect(`${systemConfig.prefixAdmin}/product`);// sau khi lưu thành công và chuyển hướng đến một trang khác 
