@@ -40,9 +40,9 @@ app.use(flash());
 // override with POST having ?_method=DELETE
 app.use(methodOverride('_method'))
 
-app.use(express.static("public")); // nhúng file tĩnh vào ứng dụng web 
+app.use(express.static(`${__dirname}/public`)); // nhúng file tĩnh vào ứng dụng web 
 
-app.set("views", "./views");
+app.set("views", `${__dirname}/views`);
 
 app.set("view engine", "pug");
 
