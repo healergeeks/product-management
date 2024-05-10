@@ -10,6 +10,9 @@ include ../../mixins/form-change-multi.pug
 
 include ../../mixins/alert.pug
 
+include ../../mixins/sort.pug
+
+
 block main
   h1 Trang danh sách sản phẩm
 
@@ -25,16 +28,22 @@ block main
           +search(keyword)
 
   .card.mb-3
+    .card-header Sắp xếp
+    .card-body
+      .row
+        .col-4
+          +sort()
+
+  .card.mb-3
     .card-header Danh sách sản phẩm
       .card-body
         .row
           .col-8
             +form-change-multi(`${prefixAdmin}/product/change-multi?_method=PATCH`)
           .col-4
-            a(
-              href= `${prefixAdmin}/product/create`
-              class="btn btn-outline-success"
-            ) + Thêm mới
+            a(href= `${prefixAdmin}/product/create` class="btn btn-outline-success") + Thêm mới
+  
+  
 
         table( class="table table-hover table-sm" checkbox-multi)
           thead

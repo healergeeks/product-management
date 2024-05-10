@@ -138,7 +138,9 @@ if (formChangeMulti) {
     //type.value lấy ra giá trị nằm trong biểu mẫu. 
 
     if (typeChange == "delete-all") {
+
       const isConfirm = confirm("Bạn có chắc muốn xóa những sản phẩm này?");
+
       if (!isConfirm) {
         return;
       }
@@ -151,31 +153,37 @@ if (formChangeMulti) {
       const inputIds = formChangeMulti.querySelector("input[name='ids']");
 
       inputsChecked.forEach(input => {
+
         const id = input.value;
 
         if (typeChange == "change-position") {
+
           const position = input.closest("tr").querySelector("input[name='position']").value;
-          console.log(ids);
+
           ids.push(`${id}-${position}`);
+
         } else {
+
           ids.push(id);
+
         }
       });
 
       inputIds.value = ids.join(", ");
 
       formChangeMulti.submit();
+
     } else {
 
       alert("Vui lòng chọn ít nhất một bản ghi!");
+
     }
   });
 }
-
 //end Form Change Multi
 
 
-// Show Alert
+// Show Alert(hiển thị cảnh báo thời gian hiển thị  )
 const showAlert = document.querySelector("[show-alert]");
 
 if (showAlert) {
@@ -184,25 +192,20 @@ if (showAlert) {
 
   const closeAlert = showAlert.querySelector("[close-alert]");
 
-  setTimeout(() => {
+  setTimeout(() => { showAlert.classList.add("alert-hidden");}, time);
 
-    showAlert.classList.add("alert-hidden");
-  }, time);
-
-  closeAlert.addEventListener("click", () => {
-    showAlert.classList.add("alert-hidden");
-  });
+  closeAlert.addEventListener("click", () => { showAlert.classList.add("alert-hidden");});
 }
 // End Show Alert
 
-// Upload Image
+
+// Upload Image(tải hình ảnh lên)
 const uploadImage = document.querySelector("[upload-image]");//chọn phần tử HTML có thuộc tính [upload-image]
 
 //uploadImage có tồn tại hay không
 if (uploadImage) {
   //phần tử HTML có thuộc tính 
   const uploadImageInput = document.querySelector("[upload-image-input]");
-
   const uploadImagePreview = document.querySelector("[upload-image-preview]");
 
   //Đăng ký một sự kiện "change" cho uploadImageInput. Khi người dùng chọn một hình ảnh từ hộp thoại tải lên, sự kiện này sẽ được kích hoạt.
@@ -219,3 +222,61 @@ if (uploadImage) {
   });
 }
 // End Upload Image
+
+
+// Sort (sắp xếp sản phẩm )
+const sort = document.querySelector("[sort]");//lấy phần tử HTML có thuộc tính [sort]
+
+//có phần tử sort được lấy hay không
+if (sort) {
+
+  let url = new URL(window.location.href);//Tạo một đối tượng URL từ địa chỉ URL hiện tại của trang web.
+
+  const sortSelect = sort.querySelector("[sort-select]");// Tìm phần tử con trong sort có thuộc tính [sort-select]. Đây có thể là một thẻ <select>
+  const sortClear = sort.querySelector("[sort-clear]");//Tìm phần tử con trong sort có thuộc tính [sort-clear].là một nút dùng để xóa các tham số sắp xếp khỏi URL.
+
+  // săp xếp
+  //(e) => { ... }: Đây là một hàm số (arrow function) được thực thi khi sự kiện "change" xảy ra. Biến e là đối tượng sự kiện (event object) chứa thông tin về sự kiện.
+  sortSelect.addEventListener("change", (e) => {
+
+    const value = e.target.value;//Lấy giá trị của phần tử mà sự kiện được kích hoạt trên, trong trường hợp này là giá trị được chọn trong sortSelect
+
+    const [sortKey, sortValue] = value.split("-");//split Phân tách giá trị được chọn thành hai phần sortKey và sortValue bằng cách tách chuỗi thành mảng sử dụng dấu gạch ngang "-" làm điểm phân cách.
+
+    //Đặt các tham số sortKey và sortValue trong đối tượng URLSearchParams của URL. Điều này sẽ cập nhật URL với các tham số mới.
+    url.searchParams.set("sortKey", sortKey);
+    url.searchParams.set("sortValue", sortValue);
+
+    window.location.href = url.href;//Thay đổi URL của trình duyệt để chuyển hướng đến URL mới đã được cập nhật.
+  });
+
+  // Xóa sắp xếp
+  //thiết lập một sự kiện lắng nghe cho sự kiện "click" trên phần tử sortClear.
+  sortClear.addEventListener("click", () => {
+
+    //Xóa các tham số sortKey và sortValue khỏi đối tượng URLSearchParams của URL. Điều này loại bỏ các tham số sắp xếp khỏi URL.
+    url.searchParams.delete("sortKey");
+    url.searchParams.delete("sortValue");
+
+    window.location.href = url.href;////Thay đổi URL của trình duyệt để chuyển hướng đến URL mới đã được cập nhật.
+  });
+
+  // Thêm selected cho option
+  // Lấy giá trị của tham số sortKey và sortValue từ URLSearchParams của URL.
+  const sortkey = url.searchParams.get("sortKey");
+  const sortValue = url.searchParams.get("sortValue");
+
+  //cả hai giá trị sortKey và sortValue có tồn tại không
+  if (sortkey && sortValue) {
+
+    //Tạo một chuỗi stringSort bằng cách kết hợp sortKey và sortValue với dấu gạch ngang "-" ở giữa.
+    const stringSort = `${sortkey}-${sortValue}`;
+
+    // Tìm phần tử <option> trong phần tử sortSelect mà có giá trị thuộc tính value trùng khớp với chuỗi stringSort.
+    const optionSelected = sortSelect.querySelector(`option[value='${ stringSort }']`);
+
+    //Đặt thuộc tính selected của phần tử <option> đã được tìm thấy ở bước trước thành true
+    optionSelected.selected = true;// hiện thị trong ô select
+  }
+}
+// End Sort

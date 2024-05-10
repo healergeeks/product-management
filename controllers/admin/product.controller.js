@@ -46,9 +46,21 @@ module.exports.index = async (req, res) => {
   );
   // End Pagination
 
+  // Sort
+  let sort = {};
+
+  //có chứa cả hai thuộc tính sortKey và sortValue không.
+  if (req.query.sortKey && req.query.sortValue) {
+
+    //trong oj thì hiểu trong ngoặc [..]là String. sort["name"] sẽ được gán "Value".
+    sort[req.query.sortKey] = req.query.sortValue;
+  } else {
+    sort.position = "desc";
+  }
+  // End Sort
 
   //limit() được gọi để giới hạn số lượng sản phẩm được trả về trên mỗi trang, và skip() được sử dụng để bỏ qua các sản phẩm trước đó (với mục đích phân trang).
-  const products = await Product.find(find).sort({ position: "desc" }).limit(objectPagination.limitItems).skip(objectPagination.skip);
+  const products = await Product.find(find).sort(sort).limit(objectPagination.limitItems).skip(objectPagination.skip);
 
   //find truy vấn cở sử dữ liệu với các điều kiện được chỉ định trong tham số find
   //const products = await Products.find(find);
@@ -67,6 +79,7 @@ module.exports.index = async (req, res) => {
   });
 }
 
+
 //[PATCH] /admin/products/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
 
@@ -79,6 +92,7 @@ module.exports.changeStatus = async (req, res) => {
 
   res.redirect("back");//Sau khi hoàn tất thao tác cập nhật, mã sẽ chuyển hướng người dùng quay lại trang trước. 
 }
+
 
 // [PATCH] /admin/products/change-multi
 module.exports.changeMulti = async (req, res) => {
@@ -127,6 +141,7 @@ module.exports.changeMulti = async (req, res) => {
   res.redirect("back");
 };
 
+
 // [DELETE] /admin/products/delete/:id
 module.exports.deleteItem = async (req, res) => {
 
@@ -142,12 +157,14 @@ module.exports.deleteItem = async (req, res) => {
   res.redirect("back");
 };
 
+
 // [GET] /admin/products/create 
 module.exports.create = async (req, res) => {
   res.render("admin/pages/products/create", {
     pageTitle: "Thêm mới sản phẩm",
   })
 };
+
 
 // [POST] /admin/products/create
 module.exports.createPost = async (req, res) => {
@@ -170,11 +187,12 @@ module.exports.createPost = async (req, res) => {
     // chuyển đổi kiểu dữ liệu 
     req.body.position = parseInt(req.body.position);
   }
-  
+
   const product = new Product(req.body);//tạo ra một sản phẩm được chuyền lên web 
   await product.save();//sau đó lưu vào cở sở dữ liệu save()
   res.redirect(`${systemConfig.prefixAdmin}/product`);// sau khi lưu thành công và chuyển hướng đến một trang khác 
 };
+
 
 // [GET] /admin/products/edit/:id 
 module.exports.edit = async (req, res) => {
@@ -195,42 +213,56 @@ module.exports.edit = async (req, res) => {
 
 };
 
+
 // [PATCH] /admin/products/edit/:id
 module.exports.editPatch = async (req, res) => {
-  const id = req.params.id;
+
+  const id = req.params.id;//Lấy giá trị của tham số id từ URL, thông qua req.params
+
+  // chuyển đổi giá trị chuỗi sang số nguyên req.body là một đối tượng chứa dữ liệu được gửi từ phía client đến server thông qua yêu cầu HTTP POST hoặc PUT. 
   req.body.price = parseInt(req.body.price);
   req.body.discountPercentage = parseInt(req.body.discountPercentage);
   req.body.stock = parseInt(req.body.stock);
   req.body.position = parseInt(req.body.position);
-  if (req.file) {
-    req.body.thumbnail = `/uploads/${req.file.filename}`;
-  }
+
   try {
+    // cập nhập dữ liệu vào mongodb theo ID và dữ liệu cập nhập là req.body
     await Product.updateOne({ _id: id }, req.body);
+
+    // thông báo 
     req.flash("success", `Cập nhật thành công!`);
+
   } catch (error) {
+
     req.flash("error", `Cập nhật thất bại!`);
+
   }
+
   res.redirect("back");
 };
 
-// [GET] /admin/products/edit/:id 
+
+// [GET] /admin/products/detail/:id 
+//:id là một phần của định tuyến động
+//Khi một yêu cầu được gửi tới đường dẫn này, giá trị của tham số id trong URL được trích xuất và lưu trong đối tượng params
 module.exports.detail = async (req, res) => {
 
   try {
     const find = {
       deleted: false,
-      _id: req.params.id
+      _id: req.params.id// là giá trị của tham số id từ URL.
     };
 
+    // tìm sản phẩm trong mongodb theo find 
     const product = await Product.findOne(find);
 
     res.render("admin/pages/products/detail", {
+      // chuyền giá trị sang file detail.pug
       pageTitle: product.title,
       product: product,
     });
   } catch (error) {
+    // nếu bị lỗi quay trở lại trang sản phẩm 
     res.redirect(`${systemConfig.prefixAdmin}/product`);
   }
-
 };
