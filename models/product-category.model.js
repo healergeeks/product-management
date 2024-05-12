@@ -5,13 +5,13 @@ mongoose.plugin(slug);
 
 const productCategorySchema = new mongoose.Schema({
   title: String,// tên sản phẩn 
-  parent_idparent_id: {
+  parent_idparent_id: {// danh mục cha 
     type: String,
     default: "",
   },
   description: String,// mô tả
-  thumbnail: String,
-  status: String,
+  thumbnail: String,  // ảnh 
+  status: String,//
   position: Number,
   slug: {
     type: String,

@@ -6,8 +6,6 @@ const uploadCloud = require("../../middlewares/admin/uploadCloud.middleware");
 
 const router = express.Router();
 
-const storageMulter = require("../../helpers/storageMulter");
-
 // const upload = multer({ storage: storageMulter() });//lưu dữ liệu đa phương tiện vào thư mục trên máy tính của mính
 
 const upload = multer()//cách khác dùng để lưu dữ liệu đa phương tiện thên đám mây 
