@@ -7,6 +7,10 @@ mongoose.plugin(slug);//là một phương thức được sử dụng để kí
 //Schema là khởi tạo bộ khung ánh xạ tới bộ sưu tập MongoDB và xác định hình dạng của tài liệu trong bộ sưu tập đó.
 const productSchema = new mongoose.Schema({
   title: String,// tên sản phẩn 
+  product_category_id: {
+    type: String,
+    default: null,
+  },
   description: String,
   price: Number,
   discountPercentage: Number,
@@ -24,7 +28,7 @@ const productSchema = new mongoose.Schema({
     default: false,
   },
   daletedAt: Date,// theo dõi thời gian sửa đổi sản phẩm 
-},{
+}, {
   timestamps: true//thuộc tính "timestamps" với giá trị là true. Trong MongooseJS, điều này tạo ra hai trường bổ sung tự động: "createdAt" và "updatedAt", để theo dõi thời gian mà một bản ghi được tạo và cập nhật.
 }
 );

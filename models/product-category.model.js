@@ -4,13 +4,18 @@ const slug = require("mongoose-slug-updater");
 mongoose.plugin(slug);
 
 const productCategorySchema = new mongoose.Schema({
-  title: String,// tên sản phẩn 
-  parent_idparent_id: {// danh mục cha 
+  title: String,// tên sản phẩn   
+  parent_id: {
     type: String,
-    default: "",
+    default: null,
   },
+  // parent_id: {// danh mục cha 
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'Product-category',
+  //   default: null,
+  // },
   description: String,// mô tả
-  thumbnail: String,  // ảnh 
+  thumbnail: String,  // ảnh  
   status: String,//
   position: Number,
   slug: {

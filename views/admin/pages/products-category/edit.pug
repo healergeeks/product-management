@@ -1,6 +1,7 @@
 extends ../../layouts/default.pug
 
 include ../../mixins/alert.pug
+include ../../mixins/select-tree.pug
 
 block main
   +alert-sueccss(5000)
@@ -8,7 +9,7 @@ block main
 
   h1(class="mb-4") Chỉnh sủa sản phẩm
   form(
-    action=`${prefixAdmin}/products-category/edit/${record.id}?_method=PATCH`
+    action=`${prefixAdmin}/products-category/edit/${data.id}?_method=PATCH`
     id="form-create-product"
     method="POST"
     enctype="multipart/form-data"
@@ -21,7 +22,7 @@ block main
         id="title"
         name="title"
         required
-        value=record.title
+        value=data.title
       )
     div(class="form-group")
       label(for="desc") Mô tả
@@ -30,18 +31,18 @@ block main
         id="desc"
         name="description"
         rows="5"
-        value=record.description
-      ) #{record.description}
+        value=data.description
+      ) #{data.description}
     div(class="form-group")
-      label(for="price") Danh mục cha
-      input(
-        type="number"
+      label(for="parent_id") Danh mục cha
+      select(
+        name="parent_id"
+        id="parent_id"
         class="form-control"
-        id="price"
-        name="price"
-        value=record.price
-        min="0"
       )
+        option(value=null disabled selected) -- Chọn danh mục cha --
+        if(records)
+          +select-tree(records, 1,data.parent_id)
     //- div(class="form-group")
     //-   label(for="discount") % Giảm giá
     //-   input(
@@ -75,7 +76,7 @@ block main
         upload-image-input
       )
       img(
-        src = record.thumbnail
+        src = data.thumbnail
         upload-image-preview
         class="image-preview"
       )
@@ -88,7 +89,7 @@ block main
         name="position"
         placeholder="Tự động tăng"
         min="1"
-        value=record.position
+        value=data.position
       )
     div(class="form-group form-check form-check-inline")
       input(
@@ -97,7 +98,7 @@ block main
         id="statusActive"
         name="status"
         value="active"
-        checked=(record.status == "active" ? true : false)
+        checked=(data.status == "active" ? true : false)
       )
       label(for="statusActive" class="form-check-label") Hoạt động
     div(class="form-group form-check form-check-inline")
@@ -107,7 +108,7 @@ block main
         id="status InActive"
         name="status"
         value="inactive"
-        checked= (record.status == "inactive" ? true : false)
+        checked= (data.status == "inactive" ? true : false)
       )
       label(for="statusInActive" class="form-check-label") Dừng hoạt động
     div(class="form-group")
@@ -115,4 +116,4 @@ block main
       type="submit"
       class="btn btn-primary"
       ) cập nhật
-    script(src="/admin/js/product.js")
+    //- script(src="/admin/js/product.js")
