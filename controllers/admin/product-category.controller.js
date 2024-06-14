@@ -214,7 +214,7 @@ module.exports.detail = async (req, res) => {
       _id: req.params.id
     };
     const productCategory = await ProductCategory.findOne(find);
-    console.log("ok")
+    // const Newrecords = createTreeHelper.tree(productCategory);
     res.render("admin/pages/products-category/detail", {
 
       pageTitle: ProductCategory.title,

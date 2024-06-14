@@ -1,16 +1,10 @@
 extends ../../layouts/default.pug
 block main
   if (ProductCategory.title) 
-    h1(class="mb-4") #{ProductCategory.title}
+    h1(class="mb-4") Danh mục: #{ProductCategory.title}
 
-  if (ProductCategory.parent_idparent_id) 
-    div(class="mb-4") Danh mục cha: <b>#{ProductCategory.parent_idparent_id}</b>
-
-  //- if (ProductCategory.discountPercentage) 
-  //-   div(class="mb-4") Giảm giá: <b>#{ProductCategory.discountPercentage}%</b>
-
-  //- if (ProductCategory.stock)
-  //-   div(class="mb-4") còn lại: <b>#{ProductCategory.stock}</b>
+  if (ProductCategory.parent_id) 
+    div(class="mb-4") Danh mục cha:<b>#{ProductCategory.parent_id}</b>
 
   if (ProductCategory.thumbnail)
     div(class="mb-4")
