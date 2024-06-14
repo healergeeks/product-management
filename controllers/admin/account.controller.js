@@ -18,6 +18,7 @@ module.exports.index = async (req, res) => {
   }
   res.render("admin/pages/accounts/index", {
     pageTitle: "Danh sách tài khoản",
+    records: records,
   });
 };
 
