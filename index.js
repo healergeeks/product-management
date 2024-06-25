@@ -7,7 +7,7 @@ const methodOverride = require('method-override');//được sử dụng để g
 //các trình duyệt web chỉ hỗ trợ một số phương thức HTTP chính thức như GET và POST. Tuy nhiên, có một số tình huống mà bạn muốn sử dụng các phương thức HTTP khác như PUT, DELETE, PATCH, v.v.
 const flash = require('express-flash');
 
-
+const moment = require("moment");
 require("dotenv").config(); // 
 
 const database = require("./config/database");
@@ -46,7 +46,7 @@ route(app)
 
 // App Locals Variables dungf để tạo ra biến toàn cục ở bất kỳ file nào cũng dùng được 
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
-
+app.locals.moment = moment;
 app.listen(port, () => {
 
   console.log(`App listening on port ${port}`);

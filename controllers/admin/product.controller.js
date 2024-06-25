@@ -1,5 +1,6 @@
 const Product = require("../../models/porduct.model");
 const ProductCategory = require("../../models/product-category.model");
+const Account = require("../../models/account.model");
 
 const filterStatusHelpers = require("../../helpers/filterStatus");
 const searchHelpers = require("../../helpers/search");
@@ -60,6 +61,15 @@ module.exports.index = async (req, res) => {
 
   //limit() được gọi để giới hạn số lượng sản phẩm được trả về trên mỗi trang, và skip() được sử dụng để bỏ qua các sản phẩm trước đó (với mục đích phân trang).
   const products = await Product.find(find).sort(sort).limit(objectPagination.limitItems).skip(objectPagination.skip);
+
+  for (const product of products) {
+    const user = await Account.findOne({
+      _id: product.createdBy.account_id
+    });
+    if (user) {
+      product.accountFullName = user.fullName;
+    }
+  }
 
   //find truy vấn cở sử dữ liệu với các điều kiện được chỉ định trong tham số find
   //const products = await Products.find(find);
@@ -159,6 +169,7 @@ module.exports.deleteItem = async (req, res) => {
 
 // [GET] /admin/products/create 
 module.exports.create = async (req, res) => {
+  console.log(res.locals.user);
   let find = {
     deleted: false
   };
@@ -193,7 +204,9 @@ module.exports.createPost = async (req, res) => {
     // chuyển đổi kiểu dữ liệu 
     req.body.position = parseInt(req.body.position);
   }
-
+  req.body.createdBy = {
+    account_id: res.locals.user.id
+  };
   const product = new Product(req.body);//tạo ra một sản phẩm được chuyền lên web 
   await product.save();//sau đó lưu vào cở sở dữ liệu save()
   res.redirect(`${systemConfig.prefixAdmin}/product`);// sau khi lưu thành công và chuyển hướng đến một trang khác 
