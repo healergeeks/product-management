@@ -63,12 +63,20 @@ module.exports.index = async (req, res) => {
   const products = await Product.find(find).sort(sort).limit(objectPagination.limitItems).skip(objectPagination.skip);
 
   for (const product of products) {
+    // lấy ra thông tin người tạo 
     const user = await Account.findOne({
       _id: product.createdBy.account_id
     });
     if (user) {
       product.accountFullName = user.fullName;
     }
+    // lấy ra thông tin người cập nhập gần nhất 
+    const updatedBy = product.updatedBy.slice(-1)[0]; if (updatedBy) {
+      const userUpdated = await Account.findOne({
+        _id: updatedBy.account_id
+      });
+    }
+    updatedBy.accountFullName = userUpdated.fullName;
   }
 
   //find truy vấn cở sử dữ liệu với các điều kiện được chỉ định trong tham số find
@@ -95,9 +103,13 @@ module.exports.changeStatus = async (req, res) => {
   const status = req.params.status; //req đường truyền, đường chuyền được dặt tên trong oj params tên là status
   const id = req.params.id;
 
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date()
+  }
   req.flash("success", "Cập nhật trạng thái thành công!");
 
-  await Product.updateOne({ _id: id }, { status: status });//updateOne sửa đổi một sản phẩm theo ID
+  await Product.updateOne({ _id: id }, { status: status, $push: { updatedBy: updatedBy } });//updateOne sửa đổi một sản phẩm theo ID
 
   res.redirect("back");//Sau khi hoàn tất thao tác cập nhật, mã sẽ chuyển hướng người dùng quay lại trang trước. 
 }
@@ -110,17 +122,21 @@ module.exports.changeMulti = async (req, res) => {
 
   const ids = req.body.ids.split(", ");//split()phân tách bằng dấu phẩy và khoảng trắng ", ".
 
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date()
+  }
   switch (type) {
     case "active":// nếu type là "active", các sản phẩm tương ứng với các ID được cung cấp sẽ được cập nhật trạng thái thành "active" trong cơ sở dữ liệu.
 
-      await Product.updateMany({ _id: { $in: ids } }, { status: "active" });
+      await Product.updateMany({ _id: { $in: ids } }, { status: "active", $push: { updatedBy: updatedBy } });
 
       req.flash("success", `Cập nhật trạng thái thành công ${ids.length} sản phẩm`);
 
       break;
     case "inactive":
 
-      await Product.updateMany({ _id: { $in: ids } }, { status: "inactive" });
+      await Product.updateMany({ _id: { $in: ids } }, { status: "inactive", $push: { updatedBy: updatedBy } });
 
       req.flash("success", `Cập nhật trạng thái thành công ${ids.length} sản phẩm`);
 
@@ -129,8 +145,12 @@ module.exports.changeMulti = async (req, res) => {
       await Product.updateMany(
         { _id: { $in: ids } },
         {
-          deleted: true,
-          deletedAt: new Date(),
+          deleted: true,//đã xóa bằng cách đặt thuộc tính deleted thành true
+          // daletedAt: new Date(),//ghi lại thời gian xóa 
+          deletedBy: {
+            account_id: res.locals.user.id,
+            deletedAt: new Date(),
+          }
         }
       );
       req.flash("success", `Dã xoá thành công ${ids.length} sản phẩm`);
@@ -141,7 +161,7 @@ module.exports.changeMulti = async (req, res) => {
         position = parseInt(position);
         console.log(id);
         // console.log(position);
-        await Product.updateOne({ _id: id }, { position: position });
+        await Product.updateOne({ _id: id }, { position: position, $push: { updatedBy: updatedBy } });
       }
       break;
     default:
@@ -159,7 +179,11 @@ module.exports.deleteItem = async (req, res) => {
   //updateOne() để cập nhật mục đó trong cơ sở dữ liệu
   await Product.updateOne({ _id: id }, {
     deleted: true,//đã xóa bằng cách đặt thuộc tính deleted thành true
-    daletedAt: new Date(),//ghi lại thời gian xóa 
+    // daletedAt: new Date(),//ghi lại thời gian xóa 
+    deletedBy: {
+      account_id: res.locals.user.id,
+      deletedAt: new Date(),
+    }
   }); // xoá ở ngoài giao diện và vẫn còn trong database sau có thể mở rộng thêm sản phẩm đã xoá và có thể khôi phục
   req.flash("success", `Dã xoá thành công sản phẩm`);
   // await Product.deleteOne({ _id: id });// xoá thẳng ở trong database
@@ -249,8 +273,17 @@ module.exports.editPatch = async (req, res) => {
   req.body.position = parseInt(req.body.position);
 
   try {
+    // thêm thời gian sửa sản phẩm và ai sửa
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date()
+    }
+
     // cập nhập dữ liệu vào mongodb theo ID và dữ liệu cập nhập là req.body
-    await Product.updateOne({ _id: id }, req.body);
+    await Product.updateOne({ _id: id }, {
+      ...req.body,
+      $push: { updatedBy: updatedBy }
+    });
 
     // thông báo 
     req.flash("success", `Cập nhật thành công!`);

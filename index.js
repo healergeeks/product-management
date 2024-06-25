@@ -46,7 +46,7 @@ route(app)
 
 // App Locals Variables dungf để tạo ra biến toàn cục ở bất kỳ file nào cũng dùng được 
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
-app.locals.moment = moment;
+app.locals.moment = moment; //moment chuyển đổi thành dạng thời gian 
 app.listen(port, () => {
 
   console.log(`App listening on port ${port}`);

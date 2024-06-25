@@ -38,7 +38,13 @@ const productSchema = new mongoose.Schema({
   deletedBy: {
     account_id: String,
     deletedAt: Date,
-  }
+  },
+  updatedBy: [
+    {
+      account_id: String,
+      updatedAt: Date
+    }
+  ],
 }, {
   timestamps: true//thuộc tính "timestamps" với giá trị là true. Trong MongooseJS, điều này tạo ra hai trường bổ sung tự động: "createdAt" và "updatedAt", để theo dõi thời gian mà một bản ghi được tạo và cập nhật.
 }
