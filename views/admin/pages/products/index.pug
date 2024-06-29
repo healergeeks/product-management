@@ -63,6 +63,7 @@ block main
                 if(role.permissions.includes("products_edit"))
                   th Trạng thái
                 th Người tạo
+                th Người sửa
                 th Hành động
 
             tbody
@@ -83,10 +84,16 @@ block main
                         a(href="javascript:;" data-status=item.status data-id=item.id button-change-status class="badge badge-success" ) Hoạt động
                       else
                         a(href="javascript:;" data-status=item.status data-id=item.id button-change-status class="badge badge-danger" ) Dừng hoạt động
-                  td 
+                  td
                     p #{item.accountFullName}
-                    p 
-                      +formatDateTime(item.createdBy.createdAt)
+                    P
+                      +formatDate(item.createdBy.createdAt)
+                  td
+                    - const updatedBy = item.updatedBy.slice(-1)[0];
+                    if(updatedBy)
+                      p #{updatedBy.accountFullName}
+                      p
+                        +formatDateTime(updatedBy.createdAt)
                   td
                     a(href=`${prefixAdmin}/product/detail/${item.id}` class="btn btn-secondary btn-sm ml-1") Chi tiết
                     if(role.permissions.includes("products_edit"))

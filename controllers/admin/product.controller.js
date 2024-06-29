@@ -71,12 +71,14 @@ module.exports.index = async (req, res) => {
       product.accountFullName = user.fullName;
     }
     // lấy ra thông tin người cập nhập gần nhất 
-    const updatedBy = product.updatedBy.slice(-1)[0]; if (updatedBy) {
+    const updatedBy = product.updatedBy.slice(-1)[0];
+    if (updatedBy) {
       const userUpdated = await Account.findOne({
         _id: updatedBy.account_id
       });
+      updatedBy.accountFullName = userUpdated.fullName;
     }
-    updatedBy.accountFullName = userUpdated.fullName;
+    
   }
 
   //find truy vấn cở sử dữ liệu với các điều kiện được chỉ định trong tham số find
