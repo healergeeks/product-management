@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const session= require('express-session');
 const methodOverride = require('method-override');//được sử dụng để ghi đè phương thức HTTP được sử dụng trong một yêu cầu HTTP.
 //các trình duyệt web chỉ hỗ trợ một số phương thức HTTP chính thức như GET và POST. Tuy nhiên, có một số tình huống mà bạn muốn sử dụng các phương thức HTTP khác như PUT, DELETE, PATCH, v.v.
+
 const flash = require('express-flash');
 
 const moment = require("moment");
